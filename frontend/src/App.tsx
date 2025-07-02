@@ -1,35 +1,27 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { generateCommand, executeCommand } from './api'
+import { PromptInput, CommandInput, ExecutionResult } from './types'
+
 
 function App() {
-  const [count, setCount] = useState(0)
+    const[prompt, setPrompt] = useState("")
+    const[suggestedCommand, setSuggestedCommand] = useState<string | null>(null);
+    const[executionResult, setExecutionResult] = useState<ExecutionResult| null>(null);
+    const[erros, setError] = useState<string | null>(null);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+
+    // generates the command from prompt
+    const handleGenerate = async () => {  
+      try{
+        setExecutionResult(null);
+        setError(null);
+        const response = await generateCommand({prompt} as PromptInput);
+        setSuggestedCommand(response.command);
+      } catch (err) {
+        setError("Failed to generate command")
+      }
+    };
 }
 
 export default App
