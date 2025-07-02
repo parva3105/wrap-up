@@ -12,7 +12,7 @@ Avoid advanced PowerShell-only commands unless necessary. Prefer things like:
 Return only the actual command.
 """
 
-def get_command_from_prompt(prompt: str) -> str:
+def get_command(prompt: str) -> str:
     response = ollama.chat(
         model='llama3',
         messages=[

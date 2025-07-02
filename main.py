@@ -1,6 +1,6 @@
-from llm import get_command_from_prompt
-from executor import execute_command
-from safety import is_safe_command
+from backend.llm import get_command_from_prompt
+from backend.executor import execute_command
+from backend.safety import is_safe_command
 
 def main():
     print("🤖 Welcome to your AI Windows Assistant!")
