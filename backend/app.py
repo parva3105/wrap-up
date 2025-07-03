@@ -1,10 +1,31 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from .llm import get_command
-from .executor import execute_command
-from .safety import is_safe
+from llm import get_command
+from executor import execute_command
+from safety import is_safe
+from fastapi.middleware.cors import CORSMiddleware
+import subprocess
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Vite dev server origin
+    allow_credentials=True,
+    allow_methods=["*"], 
+    allow_headers=["*"],
+)
+
+
+def run_command(command: str):
+    powershell_command = f'powershell -Command "{command}"'
+    result = subprocess.run(
+        powershell_command,
+        shell=True,
+        capture_output=True,
+        text=True
+    )
+    return result
 
 class PromptInput(BaseModel):
     prompt: str
@@ -19,8 +40,17 @@ def generate_command(data: PromptInput):
 
 
 @app.post("/execute")
-def execute_command_api(data: CommandInput):
-    if not is_safe(data.command):
-        return {"success": False, "error" : "Unsafe Command Detected!"}
-    result = execute_command(data.command)
-    return result
+async def execute_command(data: CommandInput):
+    try:
+        result = run_command(data.command)
+        return {
+            "stdout": result.stdout,
+            "stderr": result.stderr,
+            "returncode": result.returncode
+        }
+    except Exception as e:
+        return {
+            "stdout": "",
+            "stderr": str(e),
+            "returncode": -1
+        }

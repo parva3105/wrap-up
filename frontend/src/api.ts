@@ -1,15 +1,16 @@
 import axios from 'axios';
-import { PromptInput, CommandInput, CommandResponse, ExecutionResult } from './types';
+import type { PromptInput, CommandInput, ExecutionResult } from './types';
 
+const BASE_URL = 'http://localhost:8000'; // Adjust this if deploying
 
-const API_BASE = "https://127.0.0.1:8000" //backend URL
-
-export const generateCommand = async(data: PromptInput): Promise<CommandResponse> => {
-    const response = await axios.post(`${API_BASE}/generate-command`, data);
-    return response.data;
+// Sends user prompt → gets command from LLM
+export async function generateCommand(data: PromptInput): Promise<{ command: string }> {
+  const response = await axios.post(`${BASE_URL}/generate-command`, data);
+  return response.data;
 }
 
-export const executeCommand = async(data: CommandInput): Promise<ExecutionResult> => {
-    const response = await axios.post(`${API_BASE}/execute`, data);
-    return response.data
+// Sends command → executes it if safe
+export async function executeCommand(data: CommandInput): Promise<ExecutionResult> {
+  const response = await axios.post(`${BASE_URL}/execute`, data);
+  return response.data;
 }
