@@ -32,13 +32,12 @@ function App() {
         if (!suggestedCommand) return;
         const response = await executeCommand({ command: suggestedCommand } as CommandInput);
         
-        console.log("Backend Response:", response);  // ✅ Add this line for debugging
+        console.log("Backend Response:", response); 
 
-        setExecutionResult(response); // ✅ always set this — even if stderr exists
+        setExecutionResult(response); 
 
         if (response.stderr) {
-          // Show both execution result and error if stderr is not empty
-          setError(response.stderr);  // <-- You were incorrectly checking `response.error` which doesn't exist
+          setError(response.stderr);  
         } else {
           setError(null);
         }
